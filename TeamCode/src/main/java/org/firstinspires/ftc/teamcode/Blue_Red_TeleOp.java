@@ -4,49 +4,64 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.Vector2d;
+import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.commands.ActionCommand;
+import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.drive.Drawing;
 import org.firstinspires.ftc.teamcode.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.SampleMechanism;
-
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 @Config
-@TeleOp(name="SAMPLE", group="TeleOp")
-public class Blue_Red_TeleOp extends LinearOpMode {
+@TeleOp(name = "SAMPLE", group = "TeleOp")
+public class Blue_Red_TeleOp extends CommandOpMode {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void initialize() {
         // data sent to telemetry shows up on dashboard and driver station
         // data sent to the telemetry packet only shows up on the dashboard
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+        GamepadEx gamepadEx = new GamepadEx(gamepad1);
+        DriveSubsystem drive = new DriveSubsystem(new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0)));
+        DriveCommand driveCommand = new DriveCommand(
+                drive,
+                () -> -gamepadEx.getLeftX(),
+                () -> -gamepadEx.getLeftY(),
+                () -> -gamepadEx.getRightX()
+        );
+        //TODO: see if this runs perpetually
+        // also we might not want to be creating a new packet in each loop
+        schedule(new RunCommand(() -> {
+            TelemetryPacket packet = new TelemetryPacket();
+            Pose2d pose = drive.drive.pose;
+            telemetry.addData("x", pose.position.x);
+            telemetry.addData("y",pose.position.y);
+            telemetry.addData("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
+            telemetry.update();
+
+            packet.fieldOverlay().setStroke("#3F51B5");
+            Drawing.drawRobot(packet.fieldOverlay(), pose);
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        }));
+        schedule(driveCommand);
+
+        //SampleMechanism sampleMechanism = new SampleMechanism(hardwareMap);
+        //schedule(new ActionCommand(sampleMechanism.doSampleMechanismAction(), ));
+    }
+    /*
+    @Override
+    public void runOpMode() throws InterruptedException {
+
         SampleMechanism sampleMechanism = new SampleMechanism(hardwareMap);
         // using ftcLib gamepadEx class for their key/button reader classes
-        GamepadEx gamepadEx1 = new GamepadEx(gamepad1);
         ArrayList<Action> runningActions = new ArrayList<>();
 
         waitForStart();
         while (opModeIsActive()) {
-            TelemetryPacket packet = new TelemetryPacket();
-
-            drive.setDrivePowers(new PoseVelocity2d(
-                    new Vector2d(
-                            -gamepadEx1.getLeftY(),
-                            -gamepadEx1.getLeftX()
-                    ),
-                    -gamepadEx1.getRightX()
-            ));
-            drive.updatePoseEstimate();
-
             // example of how you'd queue up actions
             // for larger more complex motions, use SequentialAction and ParallelAction
             if(gamepadEx1.wasJustPressed(GamepadKeys.Button.A)) {
@@ -61,17 +76,9 @@ public class Blue_Red_TeleOp extends LinearOpMode {
                 }
             }
             runningActions = newActions;
-
-
-
-            telemetry.addData("x", drive.pose.position.x);
-            telemetry.addData("y", drive.pose.position.y);
-            telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
-            telemetry.update();
-
-            packet.fieldOverlay().setStroke("#3F51B5");
-            Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
         }
     }
+     */
+
+
 }
