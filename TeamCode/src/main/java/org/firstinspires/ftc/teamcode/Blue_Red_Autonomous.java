@@ -8,51 +8,36 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.Drawing;
 import org.firstinspires.ftc.teamcode.drive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 
 @Config
 @Autonomous(name="SAMPLE", group="Auto")
-public class Blue_Red_Autonomous extends LinearOpMode {
+public class Blue_Red_Autonomous extends CommandOpMode {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void initialize() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+        DriveSubsystem drive = new DriveSubsystem(new MecanumDrive(hardwareMap, new Pose2d(0, 0,0)));
 
-        // initialization runtimes go here
-        // such as initial servo positions or trajectory initializations
-
-        while (!isStopRequested() && !opModeIsActive()) {
-            // loop runs in time between initialization and game start
-            telemetry.update();
-        }
-
-        waitForStart();
-        if (isStopRequested()) return;
-
-        // autonomous routines will go here
-        Actions.runBlocking(
-                new SequentialAction(
-                        // insert additionally actions here
-                )
-        );
-
-        while (opModeIsActive()) {
-            // insert post auto routine looping motions here
-            drive.updatePoseEstimate(); // TODO test if this actually works
-            telemetry.addData("x", drive.pose.position.x);
-            telemetry.addData("y", drive.pose.position.y);
-            telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
-            telemetry.update();
-
+        // TODO: create wrappers for trajectory following maybe possibly
+        // this RunCommand Loop might be useless
+        schedule(new RunCommand(() -> {
             TelemetryPacket packet = new TelemetryPacket();
+            Pose2d pose = drive.getPose();
+            telemetry.addData("x", pose.position.x);
+            telemetry.addData("y",pose.position.y);
+            telemetry.addData("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
+            telemetry.update();
             packet.fieldOverlay().setStroke("#3F51B5");
-            Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
+            Drawing.drawRobot(packet.fieldOverlay(), pose);
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
-        }
+        }));
     }
 }
