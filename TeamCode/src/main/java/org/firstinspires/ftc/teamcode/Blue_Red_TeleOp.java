@@ -23,6 +23,8 @@ import org.firstinspires.ftc.teamcode.subsystems.SampleSubsystem;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Config
 @TeleOp(name = "SAMPLE", group = "TeleOp")
@@ -41,8 +43,7 @@ public class Blue_Red_TeleOp extends CommandOpMode {
 
         // sample for what action and command synergy and binding
         SampleSubsystem sampleSubsystem = new SampleSubsystem(hardwareMap);
-        Set<Subsystem> subsystemSet = new HashSet<>();
-        subsystemSet.add(sampleSubsystem);
+        Set<Subsystem> subsystemSet = Stream.of(drive).collect(Collectors.toSet());
         gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new ActionCommand(sampleSubsystem.doAction(), subsystemSet));
         //TODO: see if this runs perpetually
         // also we might not want to be creating a new packet in each loop
