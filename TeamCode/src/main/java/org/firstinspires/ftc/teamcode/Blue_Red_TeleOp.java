@@ -19,9 +19,7 @@ import org.firstinspires.ftc.teamcode.drive.Drawing;
 import org.firstinspires.ftc.teamcode.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.SampleMechanism;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.SampleSubsystem;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,10 +39,11 @@ public class Blue_Red_TeleOp extends CommandOpMode {
                 () -> -gamepadEx.getLeftY(),
                 () -> -gamepadEx.getRightX());
 
-        // sample for what action and command synergy and binding
-        SampleSubsystem sampleSubsystem = new SampleSubsystem(hardwareMap);
+        // sample for action and command synergy and binding
+        SampleMechanism sampleMechanism = new SampleMechanism(hardwareMap);
         Set<Subsystem> subsystemSet = Stream.of(drive).collect(Collectors.toSet());
-        gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new ActionCommand(sampleSubsystem.doAction(), subsystemSet));
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new ActionCommand(sampleMechanism.doSampleMechanismAction(), subsystemSet));
+
         //TODO: see if this runs perpetually
         // also we might not want to be creating a new packet in each loop
         schedule(new RunCommand(() -> {

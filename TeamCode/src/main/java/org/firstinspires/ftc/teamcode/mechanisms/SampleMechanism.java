@@ -10,6 +10,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class SampleMechanism {
+
+    /*
+    avoid making mechanisms and actions at all costs, their purpose collides with subsystems and commands
+    we will be aiming their sole use as incorporating roadrunner functionality into ftclib.
+     */
     private DcMotorEx motor;
 
     public SampleMechanism(HardwareMap hardwareMap) {

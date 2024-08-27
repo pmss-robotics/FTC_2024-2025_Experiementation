@@ -40,6 +40,11 @@ public class VisionSubsystem extends SubsystemBase {
     private final AprilTagProcessor aprilTag;
     private final SampleVisionProcessor sampleVisionProcessor;
     private final VisionPortal visionPortal;
+
+    /**
+     * All vision related logic will be done here including april tags, tensorflow, and opencv
+     * @param hardwareMap
+     */
     public VisionSubsystem(HardwareMap hardwareMap) throws InterruptedException {
         // TODO sample code!!!! re-implement in the field.
         final CameraStreamProcessor dashboard = new CameraStreamProcessor();
