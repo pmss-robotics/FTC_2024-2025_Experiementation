@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.RunCommand;
@@ -32,16 +31,26 @@ public class Blue_Red_TeleOp extends CommandOpMode {
         // data sent to telemetry shows up on dashboard and driver station
         // data sent to the telemetry packet only shows up on the dashboard
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        // GamepadEx wraps gamepad 1 or 2 for easier implementations of more complex key bindings
         GamepadEx gamepadEx = new GamepadEx(gamepad1);
+        // The driveSubsystem wraps Roadrunner's MecanumDrive to combine with Commands.
         DriveSubsystem drive = new DriveSubsystem(new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0)));
+        // The driveCommand uses methods defined in the DriveSubsystem to create behaviour.
+        // we're passing in methods to get values instead of straight values because it avoids
+        // disturbing the structure of the CommandOpMode. The aim is to define bindings in this
+        // initialize() method through Commands and these will be looped and acted in the (hidden)
+        // run() loop. TODO we (me at least) should learn more about lamda expressions / functions as parameters.
         DriveCommand driveCommand = new DriveCommand(drive,
                 () -> -gamepadEx.getLeftX(),
                 () -> -gamepadEx.getLeftY(),
-                () -> -gamepadEx.getRightX());
+                () -> -gamepadEx.getRightX(),
+                true);
 
         // sample for action and command synergy and binding
+        // try to avoid this kind of usage as much as possible
         SampleMechanism sampleMechanism = new SampleMechanism(hardwareMap);
         Set<Subsystem> subsystemSet = Stream.of(drive).collect(Collectors.toSet());
+        // the binding for whenPressed() is convenient since it only activates once even when A is held down.
         gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new ActionCommand(sampleMechanism.doSampleMechanismAction(), subsystemSet));
 
         //TODO: see if this runs perpetually

@@ -2,13 +2,9 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Rotation2d;
-import com.acmerobotics.roadrunner.Trajectory;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.teamcode.drive.MecanumDrive;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -16,24 +12,24 @@ public class DriveSubsystem extends SubsystemBase {
     public DriveSubsystem(MecanumDrive drive) {
         this.drive = drive;
     }
-    // TODO: see if driver centric is already robot centric and if not, ummm.
-    public void robotCentric(double lx, double ly, double rx) {
-        Pose2d poseEstimate = drive.pose;
-        Vector2d input = new Vector2d(ly, lx);
-        // we probably need to rotate the input vector by poseEstimate.heading
-        // idk how and I don't want to just slam a formula in directly
-        // maybe there's a method somewhere otherwise we'll need to do that.
+
+    /*
+    field centric means that 'forward' or any other direction is always relative to the
+    driver / field i.e. it stays constant regardless of the robot's current heading
+     */
+    public void fieldCentric(double lx, double ly, double rx) {
+        // TODO verify if this works the inverse() might not be necessary
         setDrivePowers(new PoseVelocity2d(
-                new Vector2d(
-                       input.x,
-                        input.y
-                ),
+                drive.pose.heading.inverse().times(new Vector2d(lx, ly)),
                 rx
         ));
         updatePoseEstimate();
     }
 
-    public void driverCentric(double lx, double ly, double rx) {
+    /*
+    robot centric means that direction is always relative to the robot
+     */
+    public void robotCentric(double lx, double ly, double rx) {
         setDrivePowers(new PoseVelocity2d(
                 new Vector2d(
                         lx,
