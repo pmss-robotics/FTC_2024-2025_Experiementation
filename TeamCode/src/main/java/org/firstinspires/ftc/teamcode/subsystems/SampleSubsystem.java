@@ -1,15 +1,21 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 // https://docs.ftclib.org/ftclib/command-base/command-system/subsystems
+@Config
 public class SampleSubsystem extends SubsystemBase {
 
     // declare hardware here
+    Telemetry telemetry;
 
-    public SampleSubsystem (HardwareMap hardwareMap) {
+    public SampleSubsystem (HardwareMap hardwareMap, Telemetry telemetry) {
         // initialize hardware here alongside other parameters
+        this.telemetry = telemetry;
     }
     @Override
     public void periodic() {

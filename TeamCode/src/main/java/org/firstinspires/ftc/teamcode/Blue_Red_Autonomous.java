@@ -27,7 +27,7 @@ public class Blue_Red_Autonomous extends CommandOpMode {
     @Override
     public void initialize() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        DriveSubsystem drive = new DriveSubsystem(new MecanumDrive(hardwareMap, new Pose2d(0, 0,0)));
+        DriveSubsystem drive = new DriveSubsystem(new MecanumDrive(hardwareMap, new Pose2d(0, 0,0)), telemetry);
 
         Action trajectoryAction = drive.actionBuilder(drive.getPose())
                 .splineTo(new Vector2d(10, 10), Math.PI / 2)

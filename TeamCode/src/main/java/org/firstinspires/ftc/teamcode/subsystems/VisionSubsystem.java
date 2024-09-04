@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.checker.units.qual.C;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.function.Consumer;
 import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -40,12 +41,14 @@ public class VisionSubsystem extends SubsystemBase {
     private final AprilTagProcessor aprilTag;
     private final SampleVisionProcessor sampleVisionProcessor;
     private final VisionPortal visionPortal;
+    private Telemetry telemetry;
 
     /**
      * All vision related logic will be done here including april tags, tensorflow, and opencv
      * @param hardwareMap
      */
-    public VisionSubsystem(HardwareMap hardwareMap) throws InterruptedException {
+    public VisionSubsystem(HardwareMap hardwareMap, Telemetry telemetry) throws InterruptedException {
+        this.telemetry = telemetry;
         // TODO sample code!!!! re-implement in the field.
         final CameraStreamProcessor dashboard = new CameraStreamProcessor();
         sampleVisionProcessor = new SampleVisionProcessor();

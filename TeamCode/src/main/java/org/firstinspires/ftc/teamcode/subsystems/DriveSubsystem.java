@@ -1,16 +1,21 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import org.firstinspires.ftc.teamcode.drive.MecanumDrive;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.drive.MecanumDrive;
+@Config
 public class DriveSubsystem extends SubsystemBase {
     private final MecanumDrive drive;
-    public DriveSubsystem(MecanumDrive drive) {
+    private Telemetry telemetry;
+    public DriveSubsystem(MecanumDrive drive, Telemetry telemetry) {
         this.drive = drive;
+        this.telemetry = telemetry;
     }
 
     /*
