@@ -42,7 +42,7 @@ public class FeedforwardArmSubsystem extends SubsystemBase {
     }
     // this is probably so wrong
     public void holdPosition() {
-        double power = feedforward.calculate(target / ticksInRadians,2 );
+        double power = feedforward.calculate(target / ticksInRadians, targetArmVel);
         arm.set(power);
     }
     
