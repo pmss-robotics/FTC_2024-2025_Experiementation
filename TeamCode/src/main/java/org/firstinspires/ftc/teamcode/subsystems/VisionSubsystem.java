@@ -5,6 +5,7 @@ import static java.lang.Thread.sleep;
 import android.graphics.Bitmap;
 import android.graphics.Camera;
 import android.graphics.Canvas;
+import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -61,6 +62,8 @@ public class VisionSubsystem extends SubsystemBase {
                 .build();
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCameraResolution(new Size(640, 480))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG) // worse compression than the default but faster
                 .addProcessors(dashboard, aprilTag, sampleVisionProcessor)
                 .build();
 
@@ -72,6 +75,8 @@ public class VisionSubsystem extends SubsystemBase {
         while(elapsedTime.seconds() < 20 && cameraState != VisionPortal.CameraState.STREAMING){
             cameraState = visionPortal.getCameraState();
         }
+        telemetry.log().add("Time from build to streaming " + elapsedTime.milliseconds() + "ms");
+
         if (visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING) {
             ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
             if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
